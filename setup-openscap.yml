@@ -7,9 +7,8 @@
   tasks:
     - name: Install OpenSCAP Packages
       yum:
-        name: "{{ packages }}"
+        name: "{{ item }}"
         state: latest
-        vars:
-          packages:
-            - openscap-scanner
-            - scap-security-guide
+      with_items:
+        - openscap-scanner
+        - scap-security-guide
