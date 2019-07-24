@@ -1,0 +1,12 @@
+- name: Register RHEL Host to RHN
+  hosts: all
+  become: True
+  gather_facts: False
+  
+  tasks:
+    - name: Register as user with password and auto-subscribe to available content.
+      redhat_subscription:
+        state: present
+        username: {{ username }}
+        password: {{ password }}
+        auto_attach: true
