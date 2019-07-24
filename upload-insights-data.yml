@@ -3,6 +3,7 @@
   hosts: all
   become: True
   gather_facts: False
+  
   tasks:
     - name: Run Insights Client
       command: redhat-access-insights
