@@ -5,12 +5,12 @@
   gather_facts: False
   
   tasks:
-    - name: Find /var/log files equal or greater than 10 megabytes ending with .old or .log.gz
+    - name: Find OpenSCAP Profiles in know location
       find:
         paths: /usr/share/xml/scap/ssg/content/
         patterns: 'ssg-*-ds.xml'
-      register: find.results
+      register: results
 
     - name: Print to Standard Output
       debug:
-        msg: {{ find.results }}
+        msg: "{{ results }}"
