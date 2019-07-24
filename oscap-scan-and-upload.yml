@@ -1,0 +1,28 @@
+---
+- name: OpenSCAP Scan and Upload Data
+  hosts: all
+  become: True
+  gather_facts: False
+  vars:
+    oscap_profile: xccdf_org.ssgproject.content_profile_standard
+    oscap_policy: ssg-rhel7-ds
+    scan_results: /tmp/scan.xml
+  
+  tasks:
+    - name: Clean up any previous scan results
+      file:
+        name: /tmp/scan.xml
+        state: absent
+
+    - name: Run OpenSCAP scan
+      command: oscap xccdf eval \
+        --profile {{ oscap_profile }} \
+        --results {{ scan_results }} \
+        --fetch-remote-resources \
+        /usr/share/xml/scap/ssg/content/{{ oscap_policy }}.xml
+      ignore_errors: yes
+
+    - name: Upload scan results to cloud.redhat.com
+      command: insights-client \
+        --verbose --payload {{ scan_results }} \
+        --content-type application/vnd.redhat.compliance.something+tgz
