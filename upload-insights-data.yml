@@ -6,4 +6,4 @@
   
   tasks:
     - name: Run Insights Client
-      command: redhat-access-insights
+      command: insights-client
