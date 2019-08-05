@@ -1,0 +1,100 @@
+---
+- name: Setup AOT Demo Tower
+  hosts: all
+  become: True
+  gather_facts: False
+
+  tasks:
+    - name: Add Insights SCM Credential to Tower
+      tower_credential:
+        name: Insights SCM Credential
+        organization: Default
+        kind: insights
+        username: "{{ rhnuser }}"
+        password: "{{ rhnpass }}"
+        state: present
+        tower_username: "{{ towuser }}"
+        tower_password: "{{ towpass }}"
+        tower_host: https://localhost
+        validate_certs: no
+      run_once: true
+      delegate_to: localhost
+      tags:
+        - credential
+
+    - name: Add Demo Machines SSH Credentials to Tower
+      tower_credential:
+        name: Machine SSH Credential
+        organization: Default
+        kind: ssh
+        username: "{{ machinesshuser }}"
+        password: "{{ machinesshpass }}"
+        state: present
+        tower_username: "{{ towuser }}"
+        tower_password: "{{ towpass }}"
+        tower_host: https://localhost
+        validate_certs: no
+      run_once: true
+      delegate_to: localhost
+      tags:
+        - credential
+
+    - name: Create Tower Inventory
+      tower_inventory:
+        name: "AOT Demo Inventory"
+        organization: "Default"
+        state: present
+        tower_username: "{{ towuser }}"
+        tower_password: "{{ towpass }}"
+        tower_host: https://localhost
+        validate_certs: no
+      run_once: true
+      delegate_to: localhost
+      tags:
+        - inventory
+
+    - name: Import Hosts into Tower Inventory
+      command: awx-manage inventory_import \
+               --source="/home/{{ studentid }}/lightbulb/lessons/lab_inventory/{{ studentid }}-instances.txt" \
+               --inventory-name="AOT Demo Inventory"
+      run_once: true
+      delegate_to: localhost
+      tags:
+        - inventory
+
+    - name: Create Insights Project in Tower
+      command: tower-cli project create -n "Insights Project" \
+               --organization "Default" \
+               --scm-type "insights" \
+               --scm-credential "Insights SCM Credential" \
+               --insecure \
+               -u "{{ towuser }}" \
+               -p "{{ towpass }}"
+      run_once: true
+      delegate_to: localhost
+      tags:
+        - project
+
+# create aotdemo project
+#  - name: Create AOT Demo Project
+
+    - name: Create Remediation Template
+      tower_job_template:
+        name: "Remediation with Red Hat Management Solutions"
+        job_type: "check"
+        inventory: "AOT Demo Inventory"
+        project: "Insights Project"
+        playbook: "aotdemoplaybook-b6960902-acd5-46b0-b32c-f1b84fa34d1f.yml"
+        credential: "Machine SSH Credential"
+        state: "present"
+        tower_username: "{{ towuser }}"
+        tower_password: "{{ towpass }}"
+        tower_host: https://localhost
+        validate_certs: no
+      run_once: true
+      delegate_to: localhost
+      tags:
+        - template
+        
+
+
