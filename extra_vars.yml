@@ -1,6 +1,6 @@
 # tower credential
 towuser: admin
-towpass: ChangeMe
+towpass: ansible
 
 # managed nodes credential
 machinesshuser: ChangeMe
