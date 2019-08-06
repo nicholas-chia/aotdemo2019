@@ -211,6 +211,3 @@
     #   delegate_to: localhost
     #   tags:
     #     - template
-    
-
-
