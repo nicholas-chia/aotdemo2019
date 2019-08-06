@@ -9,3 +9,6 @@ machinesshpass: ansible
 # insights scm credential
 rhnuser: ChangeMe
 rhnpass: ChangeMe
+
+# student number given by rhpds for ssh
+studentid: student1
