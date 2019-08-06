@@ -1,0 +1,11 @@
+# tower credential
+towuser: admin
+towpass: ChangeMe
+
+# managed nodes credential
+machinesshuser: ChangeMe
+machinesshpass: ansible
+
+# insights scm credential
+rhnuser: ChangeMe
+rhnpass: ChangeMe
