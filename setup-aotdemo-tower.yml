@@ -63,6 +63,7 @@
         - inventory
 
     - name: Create Insights Project in Tower
+      # Using tower-cli because tower module does not have insights scm-type
       command: tower-cli project create -n "Insights Project" \
                --organization "Default" \
                --scm-type "insights" \
@@ -74,17 +75,31 @@
       delegate_to: localhost
       tags:
         - project
+    
+    - name: Create AOT Demo Project in Tower
+      tower_project:
+        name: "AOT Demo Project"
+        organization: "Default"
+        scm_type: "git"
+        scm_url: "https://gitlab.com/nicholas-chia/aotdemo2019.git"
+        scm_credential: "gitlab"
+        state: present
+        tower_username: "{{ towuser }}"
+        tower_password: "{{ towpass }}"
+        tower_host: https://localhost
+        validate_certs: no
+      run_once: true
+      delegate_to: localhost
+      tags:
+        - project
 
-# create aotdemo project
-#  - name: Create AOT Demo Project
-
-    - name: Create Remediation Template
+    - name: Create Upload Insights Data Template
       tower_job_template:
-        name: "Remediation with Red Hat Management Solutions"
-        job_type: "check"
+        name: "Upload Insights Data"
+        job_type: "run"
         inventory: "AOT Demo Inventory"
-        project: "Insights Project"
-        playbook: "aotdemoplaybook-b6960902-acd5-46b0-b32c-f1b84fa34d1f.yml"
+        project: "AOT Demo Project"
+        playbook: "upload-insights-data.yml"
         credential: "Machine SSH Credential"
         state: "present"
         tower_username: "{{ towuser }}"
@@ -95,6 +110,107 @@
       delegate_to: localhost
       tags:
         - template
-        
+
+    - name: Create OpenSCAP Scan and Upload Template
+      tower_job_template:
+        name: "OpenSCAP Scan and Upload"
+        job_type: "run"
+        inventory: "AOT Demo Inventory"
+        project: "AOT Demo Project"
+        playbook: "oscap-scan-and-upload.yml"
+        credential: "Machine SSH Credential"
+        state: "present"
+        tower_username: "{{ towuser }}"
+        tower_password: "{{ towpass }}"
+        tower_host: https://localhost
+        validate_certs: no
+      run_once: true
+      delegate_to: localhost
+      tags:
+        - template
+
+- name: Setup AOT Demo Managed Nodes
+  hosts: web
+  become: True
+  gather_facts: False
+  vars:
+    oscap_profile: xccdf_org.ssgproject.content_profile_standard
+    oscap_policy: ssg-rhel7-ds
+    scan_results: /tmp/scan.xml
+
+  tasks:
+    - name: Register as user with password and auto-subscribe to available content.
+      redhat_subscription:
+        state: present
+        username: "{{ rhnuser }}"
+        password: "{{ rhnpass }}"
+        auto_attach: true
+      tags:
+        - insights
+
+    - name: Install Insights Client to Managed Nodes
+      yum:
+        name: insights-client
+        state: latest
+      tags:
+        - insights
+
+    - name: Register Insights Client to cloud.redhat.com
+      command: insights-client --register
+      tags:
+        - insights
+    
+    - name: Install OpenSCAP Packages to Managed Nodes
+      yum:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - openscap-scanner
+        - scap-security-guide
+      tags:
+        - oscap
+
+    - name: Clean up any previous scan results
+      file:
+        name: /tmp/scan.xml
+        state: absent
+      tags:
+        - oscap
+
+    - name: Run OpenSCAP scan
+      command: oscap xccdf eval \
+        --profile {{ oscap_profile }} \
+        --results {{ scan_results }} \
+        --fetch-remote-resources \
+        /usr/share/xml/scap/ssg/content/{{ oscap_policy }}.xml
+      ignore_errors: yes
+      tags:
+        - oscap
+
+    - name: Upload scan results to cloud.redhat.com
+      command: insights-client \
+        --verbose --payload {{ scan_results }} \
+        --content-type application/vnd.redhat.compliance.something+tgz
+      tags:
+        - oscap
+
+    # - name: Create Remediation Template
+    #   tower_job_template:
+    #     name: "Remediation with Red Hat Management Solutions"
+    #     job_type: "check"
+    #     inventory: "AOT Demo Inventory"
+    #     project: "Insights Project"
+    #     playbook: "aotdemoplaybook-b6960902-acd5-46b0-b32c-f1b84fa34d1f.yml"
+    #     credential: "Machine SSH Credential"
+    #     state: "present"
+    #     tower_username: "{{ towuser }}"
+    #     tower_password: "{{ towpass }}"
+    #     tower_host: https://localhost
+    #     validate_certs: no
+    #   run_once: true
+    #   delegate_to: localhost
+    #   tags:
+    #     - template
+    
 
 
