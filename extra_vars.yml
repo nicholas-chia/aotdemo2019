@@ -3,7 +3,7 @@ towuser: admin
 towpass: ansible
 
 # managed nodes credential
-machinesshuser: ChangeMe
+machinesshuser: student1
 machinesshpass: ansible
 
 # insights scm credential
