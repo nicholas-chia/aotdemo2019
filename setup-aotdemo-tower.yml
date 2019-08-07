@@ -21,7 +21,7 @@
       tags:
         - license
 
-    - name: Ensure eula is accepted if posting license
+    - name: Ensure EULA is accepted
       lineinfile:
         path: "./mytower.lic"
         line: '    "eula_accepted": true,'
