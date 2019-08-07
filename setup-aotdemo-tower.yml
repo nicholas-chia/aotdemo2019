@@ -5,6 +5,22 @@
   gather_facts: False
 
   tasks:
+    - name: Create Ansible Vault Password file
+      template:
+        src: ./vaultpass.j2
+        dest: ./vaultpass
+      run_once: true
+      delegate_to: localhost
+      tags:
+        - license
+
+    - name: Decrypt Ansible Tower license file
+      command: ansible-vault decrypt --vault-password-file=vaultpass tower.lic --output mytower.lic
+      run_once: true
+      delegate_to: localhost
+      tags:
+        - license
+
     - name: Add Insights SCM Credential to Tower
       tower_credential:
         name: Insights SCM Credential
@@ -207,6 +223,7 @@
     #     tower_password: "{{ towpass }}"
     #     tower_host: https://localhost
     #     validate_certs: no
+    #   when: "{{ rhnuser }}" == "destinasia"
     #   run_once: true
     #   delegate_to: localhost
     #   tags:
