@@ -14,12 +14,40 @@
       tags:
         - license
 
-    - name: Decrypt Ansible Tower license file
+    - name: Decrypt Ansible Tower license file and save it as another file
       command: ansible-vault decrypt --vault-password-file=vaultpass tower.lic --output mytower.lic
       run_once: true
       delegate_to: localhost
       tags:
         - license
+
+    - name: Ensure eula is accepted if posting license
+      lineinfile:
+        path: "./mytower.lic"
+        line: '    "eula_accepted": true,'
+        insertbefore: '"company_name"'
+        state: present
+      delegate_to: localhost
+      run_once: true
+      become: no
+      tags:
+        - addlicense
+    
+    - name: Post license key
+      uri:
+        url: https://localhost/api/v2/config/
+        method: POST
+        user: "{{ towuser }}"
+        password: "{{ towpass }}"
+        body: "{{ lookup('file','./mytower.lic') }}"
+        body_format: json
+        validate_certs: False
+        force_basic_auth: yes
+      delegate_to: localhost
+      run_once: true
+      become: no
+      tags:
+        - addlicense
 
     - name: Add Insights SCM Credential to Tower
       tower_credential:
