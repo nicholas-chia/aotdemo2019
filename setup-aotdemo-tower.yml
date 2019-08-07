@@ -5,49 +5,49 @@
   gather_facts: False
 
   tasks:
-    - name: Create Ansible Vault Password file
-      template:
-        src: ./vaultpass.j2
-        dest: ./vaultpass
-      run_once: true
-      delegate_to: localhost
-      tags:
-        - license
+    # - name: Create Ansible Vault Password file
+    #   template:
+    #     src: ./vaultpass.j2
+    #     dest: ./vaultpass
+    #   run_once: true
+    #   delegate_to: localhost
+    #   tags:
+    #     - license
 
-    - name: Decrypt Ansible Tower license file and save it as another file
-      command: ansible-vault decrypt --vault-password-file=vaultpass tower.lic --output mytower.lic
-      run_once: true
-      delegate_to: localhost
-      tags:
-        - license
+    # - name: Decrypt Ansible Tower license file and save it as another file
+    #   command: ansible-vault decrypt --vault-password-file=vaultpass tower.lic --output mytower.lic
+    #   run_once: true
+    #   delegate_to: localhost
+    #   tags:
+    #     - license
 
-    - name: Ensure EULA is accepted
-      lineinfile:
-        path: "./mytower.lic"
-        line: '    "eula_accepted": true,'
-        insertbefore: '"company_name"'
-        state: present
-      delegate_to: localhost
-      run_once: true
-      become: no
-      tags:
-        - addlicense
+    # - name: Ensure EULA is accepted
+    #   lineinfile:
+    #     path: "./mytower.lic"
+    #     line: '    "eula_accepted": true,'
+    #     insertbefore: '"company_name"'
+    #     state: present
+    #   delegate_to: localhost
+    #   run_once: true
+    #   become: no
+    #   tags:
+    #     - addlicense
     
-    - name: Post license key
-      uri:
-        url: https://localhost/api/v2/config/
-        method: POST
-        user: "{{ towuser }}"
-        password: "{{ towpass }}"
-        body: "{{ lookup('file','./mytower.lic') }}"
-        body_format: json
-        validate_certs: False
-        force_basic_auth: yes
-      delegate_to: localhost
-      run_once: true
-      become: no
-      tags:
-        - addlicense
+    # - name: Post license key
+    #   uri:
+    #     url: https://localhost/api/v2/config/
+    #     method: POST
+    #     user: "{{ towuser }}"
+    #     password: "{{ towpass }}"
+    #     body: "{{ lookup('file','./mytower.lic') }}"
+    #     body_format: json
+    #     validate_certs: False
+    #     force_basic_auth: yes
+    #   delegate_to: localhost
+    #   run_once: true
+    #   become: no
+    #   tags:
+    #     - addlicense
 
     - name: Add Insights SCM Credential to Tower
       tower_credential:
@@ -99,7 +99,7 @@
 
     - name: Import Hosts into Tower Inventory
       command: awx-manage inventory_import \
-               --source="/home/{{ studentid }}/lightbulb/lessons/lab_inventory/{{ studentid }}-instances.txt" \
+               --source="/home/{{ studentid }}/lab_inventory/hosts" \
                --inventory-name="AOT Demo Inventory"
       run_once: true
       delegate_to: localhost
@@ -225,7 +225,6 @@
       command: oscap xccdf eval \
         --profile {{ oscap_profile }} \
         --results {{ scan_results }} \
-        --fetch-remote-resources \
         /usr/share/xml/scap/ssg/content/{{ oscap_policy }}.xml
       ignore_errors: yes
       tags:

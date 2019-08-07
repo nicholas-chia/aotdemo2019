@@ -3,3 +3,5 @@ hosts
 config
 vaultpass
 mytower.lic
+aot-rhn-vars.yml
+nic-rhn-vars.yml
