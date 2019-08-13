@@ -1,6 +1,6 @@
 ---
 - name: OpenSCAP Scan and Upload Data
-  hosts: all
+  hosts: web
   become: True
   gather_facts: False
   vars:
