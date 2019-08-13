@@ -1,4 +1,7 @@
 
+# Deploy "Ansible RH Enterprise Linux Automation" Workshop in RHPDS
+Select nearest region and deploy
+
 # Edit extra_vars.yml and update with needed credentials
 ```
 # tower credential
