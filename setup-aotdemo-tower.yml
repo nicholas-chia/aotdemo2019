@@ -137,6 +137,13 @@
       tags:
         - project
 
+    - name: Sleep for 8 seconds and continue with play
+      # To avoid template creation error in the next task
+      wait_for:
+        timeout: 8
+      run_once: true
+      delegate_to: localhost
+
     - name: Create Upload Insights Data Template
       tower_job_template:
         name: "Upload Insights Data"
