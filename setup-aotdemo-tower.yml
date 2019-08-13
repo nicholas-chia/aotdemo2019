@@ -190,11 +190,12 @@
     scan_results: /tmp/scan.xml
 
   tasks:
-    - name: Register as user with password and auto-subscribe to available content.
+    - name: Register as user with password and auto-subscribe to available content
       redhat_subscription:
         state: present
         username: "{{ rhnuser }}"
         password: "{{ rhnpass }}"
+        force_register: true
         auto_attach: true
       tags:
         - insights
