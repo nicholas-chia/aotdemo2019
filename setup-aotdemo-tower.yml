@@ -125,8 +125,8 @@
         name: "AOT Demo Project"
         organization: "Default"
         scm_type: "git"
-        scm_url: "https://gitlab.com/nicholas-chia/aotdemo2019.git"
-        scm_credential: "gitlab"
+        scm_url: "https://github.com/nicholas-chia/aotdemo2019.git"
+        # scm_credential: "gitlab"
         state: present
         tower_username: "{{ towuser }}"
         tower_password: "{{ towpass }}"
