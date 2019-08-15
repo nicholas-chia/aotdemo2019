@@ -190,15 +190,16 @@
     scan_results: /tmp/scan.xml
 
   tasks:
-    - name: Register as user with password and auto-subscribe to available content
+    - name: Register as user with password and subscribe
       redhat_subscription:
         state: present
+        pool: '^Red Hat Enterprise Linux Server$'
         username: "{{ rhnuser }}"
         password: "{{ rhnpass }}"
         force_register: true
-        auto_attach: true
+        # auto_attach: true
       tags:
-        - insights
+        - subscribe
 
     - name: Install Insights Client to Managed Nodes
       yum:
