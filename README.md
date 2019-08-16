@@ -2,6 +2,19 @@
 # Deploy "Ansible RH Enterprise Linux Automation" Workshop in RHPDS
 Select nearest region and deploy
 
+# Edit ansible.cfg and update location of inventory host file
+```
+[defaults]
+stdout_callback = yaml
+connection = smart
+timeout = 60
+deprecation_warnings = False
+host_key_checking = False
+retry_files_enabled = False
+# Update student1 to student2 etc. if needed
+inventory = /home/student1/lab_inventory/hosts
+```
+
 # Edit extra_vars.yml and update with needed credentials
 ```
 # tower credential
