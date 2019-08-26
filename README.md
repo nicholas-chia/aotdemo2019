@@ -31,6 +31,12 @@ rhnpass: ChangeMe
 
 # student number given by rhpds for ssh
 studentid: student1
+
+# to unique identify managed host for each deployment
+# country: anz
+# country: ind
+# country: sgp
+country: aotdemo
 ```
 # Use ansible-vault to protect your extra_vars.yml file
 ```
