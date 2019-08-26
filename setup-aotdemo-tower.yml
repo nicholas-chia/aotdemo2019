@@ -209,7 +209,7 @@
         - insights
 
     - name: Register Insights Client to cloud.redhat.com
-      command: insights-client --register
+      command: insights-client --register --display-name="{{ country }}_{{ inventory_hostname_short }}"
       tags:
         - insights
     
