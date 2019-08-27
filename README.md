@@ -16,6 +16,7 @@ inventory = /home/student1/lab_inventory/hosts
 ```
 
 # Edit extra_vars.yml and update with needed credentials
+You need to make changes to ansible.cfg file if the studentid given is not student1. This can happen if you did not deploy the RHPDS demo yourself.
 ```
 # tower credential
 towuser: admin
