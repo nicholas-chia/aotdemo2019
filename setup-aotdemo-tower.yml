@@ -230,8 +230,9 @@
       tags:
         - oscap
 
-    - name: Run OpenSCAP scan
+    - name: Run OpenSCAP scan and remediation
       command: oscap xccdf eval \
+        --remediate \
         --profile {{ oscap_profile }} \
         --results {{ scan_results }} \
         /usr/share/xml/scap/ssg/content/{{ oscap_policy }}.xml
