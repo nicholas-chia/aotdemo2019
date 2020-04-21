@@ -108,7 +108,9 @@
 
     - name: Create Insights Project in Tower
       # Using tower-cli because tower module does not have insights scm-type
-      command: tower-cli project create -n "Insights Project" \
+      # command: tower-cli project create -n "Insights Project" \
+      # use absolute path for run tower-cli to avoid errors
+      command: /usr/local/bin/tower-cli project create -n "Insights Project" \
                --organization "Default" \
                --scm-type "insights" \
                --scm-credential "Insights SCM Credential" \
