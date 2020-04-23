@@ -139,10 +139,10 @@
       tags:
         - project
 
-    - name: Sleep for 8 seconds and continue with play
+    - name: Sleep for 15 seconds and continue with play
       # To avoid template creation error in the next task
       wait_for:
-        timeout: 8
+        timeout: 15
       run_once: true
       delegate_to: localhost
 
@@ -232,11 +232,11 @@
     #   tags:
     #     - oscap
 
-    - name: Run Insights OpenSCAP scan and upload report to cloud.redhat.com
-      command: insights-client --compliance
-      ignore_errors: yes
-      tags:
-        - oscap
+    # - name: Run Insights OpenSCAP scan and upload report to cloud.redhat.com
+    #   command: insights-client --compliance
+    #   ignore_errors: yes
+    #   tags:
+    #     - oscap
 
     # - name: Run OpenSCAP scan and remediation
     #   command: oscap xccdf eval \
