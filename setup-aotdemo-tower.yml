@@ -186,10 +186,10 @@
   hosts: web
   become: True
   gather_facts: False
-  vars:
-    oscap_profile: xccdf_org.ssgproject.content_profile_standard
-    oscap_policy: ssg-rhel7-ds
-    scan_results: /tmp/scan.xml
+  # vars:
+  #   oscap_profile: xccdf_org.ssgproject.content_profile_standard
+  #   oscap_policy: ssg-rhel7-ds
+  #   scan_results: /tmp/scan.xml
 
   tasks:
     - name: Register as user with password and subscribe
@@ -210,7 +210,7 @@
       tags:
         - insights
 
-    - name: Register Insights Client to cloud.redhat.com
+    - name: Register Insights Client(s) to cloud.redhat.com
       command: insights-client --register --display-name="{{ country }}_{{ inventory_hostname_short }}"
       tags:
         - insights
