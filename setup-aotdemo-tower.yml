@@ -225,29 +225,35 @@
       tags:
         - oscap
 
-    - name: Clean up any previous scan results
-      file:
-        name: /tmp/scan.xml
-        state: absent
-      tags:
-        - oscap
+    # - name: Clean up any previous scan results
+    #   file:
+    #     name: /tmp/scan.xml
+    #     state: absent
+    #   tags:
+    #     - oscap
 
-    - name: Run OpenSCAP scan and remediation
-      command: oscap xccdf eval \
-        --remediate \
-        --profile {{ oscap_profile }} \
-        --results {{ scan_results }} \
-        /usr/share/xml/scap/ssg/content/{{ oscap_policy }}.xml
+    - name: Run Insights OpenSCAP scan and upload report to cloud.redhat.com
+      command: insights-client --compliance
       ignore_errors: yes
       tags:
         - oscap
 
-    - name: Upload scan results to cloud.redhat.com
-      command: insights-client \
-        --verbose --payload {{ scan_results }} \
-        --content-type application/vnd.redhat.compliance.something+tgz
-      tags:
-        - oscap
+    # - name: Run OpenSCAP scan and remediation
+    #   command: oscap xccdf eval \
+    #     --remediate \
+    #     --profile {{ oscap_profile }} \
+    #     --results {{ scan_results }} \
+    #     /usr/share/xml/scap/ssg/content/{{ oscap_policy }}.xml
+    #   ignore_errors: yes
+    #   tags:
+    #     - oscap
+
+    # - name: Upload scan results to cloud.redhat.com
+    #   command: insights-client \
+    #     --verbose --payload {{ scan_results }} \
+    #     --content-type application/vnd.redhat.compliance.something+tgz
+    #   tags:
+    #     - oscap
 
     # - name: Create Remediation Template
     #   tower_job_template:
